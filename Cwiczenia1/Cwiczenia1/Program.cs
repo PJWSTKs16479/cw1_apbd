@@ -1,12 +1,38 @@
 ﻿using System;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Cwiczenia1
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var url = args.Length > 0 ? args[0] : "https://www.pja.edu.pl";
+
+            var client = new HttpClient();
+            var result = await client.GetAsync("https://www.pja.edu.pl");
+
+            //JS - Promise async await
+            //Java - Future
+            //Task -> async await
+
+            if(result.IsSuccessStatusCode) //2xx
+            {
+                string html = await result.Content.ReadAsStringAsync();
+                // Debugowanie: Console.WriteLine(html) ALBO break points
+                var regex = new Regex("[a-z]+[a-z0-9]*@[a-z0-9]+\\.[a-z]+", RegexOptions.IgnoreCase);
+
+                MatchCollection matches = regex.Matches(html);
+
+                foreach(var m in matches)
+                {
+                    Console.WriteLine(m);
+                }
+
+            }
+            Console.WriteLine("Koniec!");
         }
     }
 }
